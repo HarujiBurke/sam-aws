@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Demo sam in real
+
+Resources:  
+  SamInReal:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: 'toki-samInReal-1'
+      CodeUri: ../src
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9    
+      Description: demo sam in real
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref SamInRealBucket
+          OBJECT_KEY: 'demo-object-file.csv'        
+      Policies:
+        - Version: '2012-10-17'
+          Statement:            
+            - Effect: Allow
+              Action:
+                - s3:PutObject                             
+              Resource: !Sub ${SamInRealBucket.Arn}/*
+  SamInRealBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      BucketName: toki-sam-in-real-bucket-1
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Suspended
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256

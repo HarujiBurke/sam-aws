@@ -1,0 +1,21 @@
+version: '3'
+services:
+  localstack:
+    container_name: local-aws-infra
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4510-4559:4510-4559"  # external service port range
+      - "127.0.0.1:4566:4566"            # LocalStack Edge Proxy
+    environment:
+      - DEFAULT_REGION=ap-northeast-1
+      - DATA_DIR=/tmp/localstack/data
+      - AWS_ACCESS_KEY_ID=local-id
+      - AWS_SECRET_ACCESS_KEY=local-secret
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      -  "../__localstack__:/tmp/localstack:rw"
+    networks: [local-test-nw]
+
+networks:
+  local-test-nw:
+      external: true
